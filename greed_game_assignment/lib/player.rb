@@ -1,11 +1,10 @@
-require_relative 'dice'
-
 class Player
   attr_accessor :name, :score
 
   def initialize(name)
     @name = name
     @score = 0
+    @can_accumulate_score = false
   end
 
   def take_turn(is_final_turn = false)
@@ -47,8 +46,12 @@ class Player
         !scoring_dice_counts.key?(die)
       end
 
-      if non_scoring_dice.any? && !is_final_turn
-        print "Do you want to roll the non-scoring #{non_scoring_dice.length} dice? (y/n): "
+      if non_scoring_dice.any?
+        if is_final_turn
+          print "Do you want to roll the non-scoring #{non_scoring_dice.length} dice? (y/n): "
+        else
+          print "Do you want to roll the non-scoring #{non_scoring_dice.length} dice? (y/n): "
+        end
         roll_again = gets.chomp.downcase == 'y'
       else
         roll_again = false
@@ -59,7 +62,12 @@ class Player
 
     # Add round_score to player's total score if the player scored at least once in this turn
     if has_scored
-      @score += round_score
+      if round_score >= 300 || @can_accumulate_score
+        @can_accumulate_score = true
+        @score += round_score
+      else
+        puts "#{name} didn't score 300 points yet. The score won't accumulate."
+      end
     end
   end
 
