@@ -1,5 +1,11 @@
 const baseConfig = require('./nightwatch.conf.js');
 
+// Get BrowserStack credentials from environment variables
+const configData = {
+    username: process.env.BROWSERSTACK_USERNAME,
+    accessKey: process.env.BROWSERSTACK_ACCESS_KEY
+};
+
 const config = {
     ...baseConfig,
     webdriver: {
@@ -13,8 +19,8 @@ const config = {
             ...baseConfig.test_settings.default,
             desiredCapabilities: {
                 ...baseConfig.test_settings.default.desiredCapabilities,
-                'browserstack.user': process.env.BROWSERSTACK_USERNAME,
-                'browserstack.key': process.env.BROWSERSTACK_ACCESS_KEY,
+                'browserstack.user': configData.username,
+                'browserstack.key': configData.accessKey,
                 'browserstack.debug': true,
                 'browserstack.networkLogs': true,
                 'browserstack.console': 'info',
