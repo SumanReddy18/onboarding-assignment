@@ -1,0 +1,62 @@
+pipeline {
+    agent any
+
+    environment {
+        BROWSERSTACK_USERNAME = credentials('BROWSERSTACK_USERNAME_ID')
+        BROWSERSTACK_ACCESS_KEY = credentials('BROWSERSTACK_ACCESS_KEY_ID')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout([$class: 'GitSCM',
+                          branches: [[name: '*/main']],
+                          userRemoteConfigs: [[url: 'https://github.com/SumanReddy18/onboarding-assignment.git']]
+                ])
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                dir('Nightwatch_Cucumber_Assignment') {
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Setup Config') {
+            steps {
+                script {
+                    writeFile file: 'Nightwatch_Cucumber_Assignment/config.json', text: """
+                    {
+                        "browserstackUsername": "${env.BROWSERSTACK_USERNAME}",
+                        "browserstackAccessKey": "${env.BROWSERSTACK_ACCESS_KEY}"
+                    }
+                    """
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                dir('Nightwatch_Cucumber_Assignment') {
+                    sh """
+                    npx nightwatch --config nightwatch.browserstack.conf.js --env chrome
+                    """
+                }
+            }
+        }
+
+        stage('Record Results') {
+            steps {
+                junit 'Nightwatch_Cucumber_Assignment/test-results/*.xml'
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}

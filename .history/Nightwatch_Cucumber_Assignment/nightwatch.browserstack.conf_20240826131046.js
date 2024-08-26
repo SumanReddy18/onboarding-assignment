@@ -1,8 +1,4 @@
 const baseConfig = require('./nightwatch.conf.js');
-const fs = require('fs');
-
-// Read the credentials from the config file
-const configData = JSON.parse(fs.readFileSync('Nightwatch/config.json', 'utf8'));
 
 const config = {
     ...baseConfig,
@@ -17,8 +13,8 @@ const config = {
             ...baseConfig.test_settings.default,
             desiredCapabilities: {
                 ...baseConfig.test_settings.default.desiredCapabilities,
-                'browserstack.user': configData.browserstackUsername,
-                'browserstack.key': configData.browserstackAccessKey,
+                'browserstack.user': process.env.BROWSERSTACK_USERNAME,
+                'browserstack.key': process.env.BROWSERSTACK_ACCESS_KEY,
                 'browserstack.debug': true,
                 'browserstack.networkLogs': true,
                 'browserstack.console': 'info',
