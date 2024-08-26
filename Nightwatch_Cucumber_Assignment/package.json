@@ -1,0 +1,24 @@
+{
+  "name": "flipkart-testing-framework",
+  "version": "1.0.0",
+  "description": "Automated testing for Flipkart application using Nightwatch.js, Cucumber, and BrowserStack",
+  "main": "nightwatch.conf.js",
+  "scripts": {
+    "test": "nightwatch",
+    "report": "node generate-report.js"
+  },
+  "dependencies": {
+    "chai": "^5.1.1",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "chromedriver": "^128.0.0",
+    "cucumber": "^6.0.7",
+    "cucumber-html-reporter": "^6.0.0",
+    "nightwatch": "^1.7.13",
+    "nightwatch-api": "^3.0.2",
+    "punycode": "^2.3.1"
+  },
+  "author": "Suman reddy",
+  "license": "ISC"
+}
