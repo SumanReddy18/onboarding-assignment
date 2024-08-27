@@ -9,11 +9,11 @@ class Player
 
   def take_turn(is_final_turn = false)
     round_score = 0
-    non_scoring_dice = []
+    dice_to_roll = 5
     has_scored = false
 
     loop do
-      dice = Dice.new(non_scoring_dice.empty? ? 5 : non_scoring_dice.length)
+      dice = Dice.new(dice_to_roll)
       dice_roll = dice.values
       puts "#{name}'s turn:"
       puts "Rolls: #{dice_roll.join(', ')}"
@@ -46,12 +46,20 @@ class Player
         !scoring_dice_counts.key?(die)
       end
 
-      if non_scoring_dice.any?
-        if is_final_turn
-          print "Do you want to roll the non-scoring #{non_scoring_dice.length} dice? (y/n): "
-        else
-          print "Do you want to roll the non-scoring #{non_scoring_dice.length} dice? (y/n): "
-        end
+      # Check if all dice are scoring
+      if non_scoring_dice.empty?
+        puts "All dice are scoring! You get to roll all #{dice_to_roll} dice again."
+        print "Do you want to re-roll all scoring dice? (y/n): "
+        roll_again = gets.chomp.downcase == 'y'
+        break unless roll_again
+        dice_to_roll = dice_roll.length
+        next
+      else
+        dice_to_roll = non_scoring_dice.length
+      end
+
+      if dice_to_roll > 0
+        print "Do you want to roll the #{dice_to_roll} non-scoring dice? (y/n): "
         roll_again = gets.chomp.downcase == 'y'
       else
         roll_again = false
