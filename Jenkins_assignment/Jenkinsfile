@@ -1,0 +1,78 @@
+pipeline {
+    agent any
+
+    environment {
+        PATH = "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${env.PATH}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/SumanReddy18/onboarding-assignment.git', branch: 'main'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    dir('Nightwatch_Cucumber_Assignment') {
+                        sh 'npm install'
+                    }
+                }
+            }
+        }
+
+        stage('Setup Environment') {
+            steps {
+                script {
+                    dir('Nightwatch_Cucumber_Assignment') {
+                        withCredentials([string(credentialsId: 'a3ff544b-3d52-444d-97af-5bdd62440ef8', variable: 'BROWSERSTACK_USERNAME'),
+                                          string(credentialsId: '41261e60-528a-429a-bf9c-f9c368c5b69b', variable: 'BROWSERSTACK_KEY')]) {
+                            sh 'echo BROWSERSTACK_USERNAME=$BROWSERSTACK_USERNAME > .env'
+                            sh 'echo BROWSERSTACK_KEY=$BROWSERSTACK_KEY >> .env'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Run Nightwatch Tests') {
+            steps {
+                dir('Nightwatch_Cucumber_Assignment') {
+                    sh 'npx nightwatch --config nightwatch.browserstack.conf.js --env chrome'
+                }
+            }
+        }
+
+        stage('Post-Test Actions') {
+            steps {
+                script {
+                    dir('Nightwatch_Cucumber_Assignment') {
+                        junit '**/reports/*.xml'
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                dir('Nightwatch_Cucumber_Assignment') {
+                    if (fileExists('reports')) {
+                        archiveArtifacts artifacts: '**/reports/*.xml', allowEmptyArchive: true
+                    }
+                }
+                cleanWs()
+            }
+        }
+
+        failure {
+            echo 'Build failed!'
+        }
+
+        success {
+            echo 'Build succeeded!'
+        }
+    }
+}
