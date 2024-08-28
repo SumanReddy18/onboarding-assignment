@@ -1,0 +1,39 @@
+# Node.js modules
+node_modules/
+
+#environment variables 
+.env
+
+# Logs
+*.log
+
+# Directory for storing Nightwatch reports and screenshots
+reports/
+screenshots/
+
+# Test results
+test-results/
+
+# Environment files
+.env
+
+# Coverage reports
+coverage/
+
+# Cucumber test results
+cucumber-report/
+cucumber-json/
+
+# Operating system and IDE-specific files
+.DS_Store
+*.swp
+*.swo
+
+# Build output
+dist/
+build/
+
+# Miscellaneous
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
